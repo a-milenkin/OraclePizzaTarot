@@ -59,3 +59,15 @@ h1 {
     font-weight: bold;
     color: #f0a500;
 }
+
+#tarot-cards {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.tarot-card-image {
+    max-width: 150px;
+    height: auto;
+    margin: 0 5px;
+}

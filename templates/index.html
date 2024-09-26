@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оракул Пиццы</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Оракул Пиццы</h1>
+        <form id="upload-form">
+            <input type="file" id="file-input" accept="image/*" required>
+            <label for="file-input" class="upload-btn">Загрузить фото остатков пиццы</label>
+            <button type="submit" class="upload-btn">Получить предсказание</button>
+        </form>
+        <div id="prediction" style="display: none;">
+            <p>Карта Таро: <span id="tarot-card"></span></p>
+            <p id="prediction-text"></p>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

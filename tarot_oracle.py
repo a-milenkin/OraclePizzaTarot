@@ -1,4 +1,5 @@
 import random
+import os
 
 class TarotOracle:
     def __init__(self):
@@ -15,7 +16,10 @@ class TarotOracle:
         ]
 
     def draw_cards(self, num_cards=3):
-        return random.sample(self.tarot_cards, num_cards)
+        card_images = os.listdir('taro_cards_images')
+        if not card_images:
+            return random.sample(self.tarot_cards, min(num_cards, len(self.tarot_cards)))
+        return random.sample(card_images, min(num_cards, len(card_images)))
 
     def interpret_combination(self, cards):
         combinations = {
@@ -26,7 +30,7 @@ class TarotOracle:
         }
 
         for combo, interpretation in combinations.items():
-            if all(card in cards for card in combo):
+            if all(card.split('.')[0] in cards for card in combo):
                 return interpretation
 
         return "Уникальная комбинация карт предвещает интересные повороты судьбы."
@@ -36,7 +40,7 @@ class TarotOracle:
         zodiac = random.choice(self.zodiac_signs)
         interpretation = self.interpret_combination(cards)
         
-        prediction = f"На ваш вопрос '{question}' выпали карты: {', '.join(cards)}. {interpretation} {zodiac} будет вашим путеводителем в этом гастрономическом приключении!"
+        card_names = [card.split('.')[0] for card in cards]
+        prediction = f"На ваш вопрос '{question}' выпали карты: {', '.join(card_names)}. {interpretation} {zodiac} будет вашим путеводителем в этом гастрономическом приключении!"
         
         return cards, prediction
-

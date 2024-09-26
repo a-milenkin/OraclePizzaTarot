@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('upload-form');
-    const fileInput = document.getElementById('file-input');
+    const form = document.getElementById('question-form');
+    const questionInput = document.getElementById('question-input');
     const predictionDiv = document.getElementById('prediction');
     const tarotCardSpan = document.getElementById('tarot-card');
+    const predictionTextP = document.getElementById('prediction-text');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const formData = new FormData();
-        formData.append('image', fileInput.files[0]);
+        formData.append('question', questionInput.value);
 
         try {
             const response = await fetch('/predict', {
@@ -22,11 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             tarotCardSpan.textContent = data.card;
-            predictionDiv.textContent = data.prediction;
+            predictionTextP.textContent = data.prediction;
             predictionDiv.style.display = 'block';
         } catch (error) {
             console.error('Error:', error);
-            predictionDiv.textContent = 'Произошла ошибка при получении предсказания. Попробуйте еще раз.';
+            predictionTextP.textContent = 'Произошла ошибка при получении предсказания. Попробуйте еще раз.';
             predictionDiv.style.display = 'block';
         }
     });

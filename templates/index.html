@@ -9,10 +9,9 @@
 <body>
     <div class="container">
         <h1>Оракул Пиццы</h1>
-        <form id="upload-form">
-            <input type="file" id="file-input" accept="image/*" required>
-            <label for="file-input" class="upload-btn">Загрузить фото остатков пиццы</label>
-            <button type="submit" class="upload-btn">Получить предсказание</button>
+        <form id="question-form">
+            <input type="text" id="question-input" placeholder="Задайте ваш вопрос" required>
+            <button type="submit" class="submit-btn">Получить предсказание</button>
         </form>
         <div id="prediction" style="display: none;">
             <p>Карта Таро: <span id="tarot-card"></span></p>

@@ -10,17 +10,11 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image uploaded'}), 400
+    question = request.form.get('question')
+    if not question:
+        return jsonify({'error': 'No question provided'}), 400
 
-    image = request.files['image']
-    if image.filename == '':
-        return jsonify({'error': 'No image selected'}), 400
-
-    # Here you would typically save and process the image
-    # For this example, we'll skip image processing and just generate a prediction
-
-    card, prediction = tarot_oracle.generate_prediction()
+    card, prediction = tarot_oracle.generate_prediction(question)
     return jsonify({
         'card': card,
         'prediction': prediction

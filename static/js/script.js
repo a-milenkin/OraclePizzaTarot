@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data.cards.forEach(card => {
                 const img = document.createElement('img');
                 img.src = `/taro_cards_images/${card}`;
-                img.alt = card.split('.')[0];
+                img.alt = '"' + card.split('.')[0].replace(/_/g, ' ') + '"';
                 img.className = 'tarot-card-image';
                 tarotCardsDiv.appendChild(img);
             });

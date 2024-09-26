@@ -1,5 +1,6 @@
 import random
 import os
+import openai
 
 class TarotOracle:
     def __init__(self):
@@ -26,6 +27,7 @@ class TarotOracle:
             ('Справедливость', 'Суд'): "Время оценить свои кулинарные навыки и принять важное решение.",
             ('Иерофант', 'Верховная Жрица'): "Сочетание традиций и интуиции в приготовлении пиццы."
         }
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
 
     def draw_cards(self, num_cards=3):
         card_images = os.listdir('taro_cards_images')
@@ -58,12 +60,42 @@ class TarotOracle:
         interpretation = interpretation.rstrip(', ') + "."
         return interpretation
 
+    def generate_ai_prediction(self, question, cards):
+        card_names = [card.split('.')[0].replace('_', ' ') for card in cards]
+        zodiac = random.choice(self.zodiac_signs)
+        
+        prompt = f"""
+        Создайте уникальное предсказание на основе следующей информации:
+        Вопрос: "{question}"
+        Выпавшие карты Таро: {', '.join(card_names)}
+        Знак зодиака: {zodiac}
+
+        Предсказание должно быть связано с кулинарией и приготовлением пиццы. Используйте творческий подход и юмор.
+        Ответ должен быть на русском языке и состоять из 3-4 предложений.
+        """
+
+        try:
+            response = openai.Completion.create(
+                engine="text-davinci-002",
+                prompt=prompt,
+                max_tokens=200,
+                n=1,
+                stop=None,
+                temperature=0.7,
+            )
+            return response.choices[0].text.strip()
+        except Exception as e:
+            print(f"Error generating AI prediction: {e}")
+            return self.interpret_combination(cards)
+
     def generate_prediction(self, question):
         cards = self.draw_cards()
-        zodiac = random.choice(self.zodiac_signs)
-        interpretation = self.interpret_combination(cards)
+        prediction = self.generate_ai_prediction(question, cards)
         
-        card_names = [f'"{card.split(".")[0].replace("_", " ")}"' for card in cards]
-        prediction = f'На ваш вопрос "{question}" выпали карты: {", ".join(card_names)}. {interpretation} {zodiac} будет вашим путеводителем в этом гастрономическом приключении!'
+        if not prediction:
+            zodiac = random.choice(self.zodiac_signs)
+            interpretation = self.interpret_combination(cards)
+            card_names = [f'"{card.split(".")[0].replace("_", " ")}"' for card in cards]
+            prediction = f'На ваш вопрос "{question}" выпали карты: {", ".join(card_names)}. {interpretation} {zodiac} будет вашим путеводителем в этом гастрономическом приключении!'
         
         return cards, prediction

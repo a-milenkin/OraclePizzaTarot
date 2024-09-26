@@ -15,17 +15,29 @@ class TarotOracle:
             'Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева',
             'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
         ]
-        self.combinations = {
-            ('Шут', 'Маг'): "Начало нового творческого пути с большим потенциалом в кулинарии.",
-            ('Императрица', 'Император'): "Баланс между созиданием и структурой в вашей кухне.",
-            ('Луна', 'Солнце'): "Переход от неуверенности к ясности и успеху в приготовлении пиццы.",
-            ('Смерть', 'Звезда'): "Глубокая трансформация и новые возможности в вашем кулинарном искусстве.",
-            ('Отшельник', 'Мир'): "Путь от самопознания к мастерству в приготовлении пиццы.",
-            ('Башня', 'Умеренность'): "После неожиданных изменений найдете баланс в кулинарных экспериментах.",
-            ('Влюбленные', 'Дьявол'): "Страсть к пицце может привести к искушениям, но это путь к совершенству.",
-            ('Колесница', 'Сила'): "Движение вперед с уверенностью в своих кулинарных способностях.",
-            ('Справедливость', 'Суд'): "Время оценить свои кулинарные навыки и принять важное решение.",
-            ('Иерофант', 'Верховная Жрица'): "Сочетание традиций и интуиции в приготовлении пиццы."
+        self.card_meanings = {
+            'Шут': 'новые начинания, спонтанность',
+            'Маг': 'мастерство, творчество',
+            'Верховная Жрица': 'интуиция, тайны',
+            'Императрица': 'изобилие, плодородие',
+            'Император': 'структура, авторитет',
+            'Иерофант': 'традиции, обучение',
+            'Влюбленные': 'выбор, гармония',
+            'Колесница': 'движение вперед, контроль',
+            'Сила': 'внутренняя сила, храбрость',
+            'Отшельник': 'самопознание, уединение',
+            'Колесо Фортуны': 'перемены, циклы',
+            'Справедливость': 'баланс, честность',
+            'Повешенный': 'новый взгляд, жертва',
+            'Смерть': 'трансформация, обновление',
+            'Умеренность': 'гармония, баланс',
+            'Дьявол': 'искушение, зависимость',
+            'Башня': 'внезапные изменения, разрушение',
+            'Звезда': 'надежда, вдохновение',
+            'Луна': 'интуиция, иллюзии',
+            'Солнце': 'успех, радость',
+            'Суд': 'возрождение, пробуждение',
+            'Мир': 'завершение, достижение'
         }
         openai.api_key = os.environ.get("OPENAI_API_KEY")
 
@@ -35,44 +47,27 @@ class TarotOracle:
             return random.sample(self.tarot_cards, min(num_cards, len(self.tarot_cards)))
         return random.sample(card_images, min(num_cards, len(card_images)))
 
-    def interpret_combination(self, cards):
-        card_names = [card.split('.')[0].replace('_', ' ') for card in cards]
-        for combo, interpretation in self.combinations.items():
-            if all(card in card_names for card in combo):
-                return interpretation
-
-        # If no specific combination is found, generate a general interpretation
-        themes = {
-            'Шут': 'новые начинания', 'Маг': 'мастерство', 'Верховная Жрица': 'интуиция',
-            'Императрица': 'изобилие', 'Император': 'структура', 'Иерофант': 'традиции',
-            'Влюбленные': 'выбор', 'Колесница': 'движение', 'Сила': 'внутренняя сила',
-            'Отшельник': 'самопознание', 'Колесо Фортуны': 'перемены', 'Справедливость': 'баланс',
-            'Повешенный': 'новый взгляд', 'Смерть': 'трансформация', 'Умеренность': 'гармония',
-            'Дьявол': 'искушение', 'Башня': 'внезапные изменения', 'Звезда': 'надежда',
-            'Луна': 'интуиция', 'Солнце': 'успех', 'Суд': 'возрождение', 'Мир': 'завершение'
-        }
-
-        interpretation = "Ваше кулинарное путешествие включает в себя "
-        for card in card_names:
-            if card in themes:
-                interpretation += f"{themes[card]}, "
-        
-        interpretation = interpretation.rstrip(', ') + "."
-        return interpretation
-
     def generate_ai_prediction(self, question, cards):
         card_names = [card.split('.')[0].replace('_', ' ') for card in cards]
         zodiac = random.choice(self.zodiac_signs)
         
-        prompt = f"""
-        Создайте уникальное предсказание на основе следующей информации:
-        Вопрос: "{question}"
-        Выпавшие карты Таро: {', '.join(card_names)}
-        Знак зодиака: {zodiac}
+        card_descriptions = "\n".join([f"{card}: {self.card_meanings.get(card, 'значение неизвестно')}" for card in card_names])
+        
+        prompt = f'''
+Создайте уникальное и разнообразное предсказание на основе следующей информации:
+Вопрос: "{question}"
+Выпавшие карты Таро: {', '.join(card_names)}
 
-        Предсказание должно быть связано с кулинарией и приготовлением пиццы. Используйте творческий подход и юмор.
-        Ответ должен быть на русском языке и состоять из 3-4 предложений.
-        """
+Для каждой карты:
+{card_descriptions}
+
+Знак зодиака: {zodiac}
+
+Предсказание должно быть тесно связано с названиями и значениями выпавших карт, а также с кулинарией и приготовлением пиццы. 
+Используйте творческий подход, юмор и метафоры, связанные с пиццей и ее ингредиентами.
+Не используйте шаблонные фразы вроде "Ваше кулинарное путешествие включает в себя".
+Ответ должен быть на русском языке и состоять из 4-5 уникальных предложений.
+'''
 
         try:
             response = openai.Completion.create(
@@ -81,21 +76,25 @@ class TarotOracle:
                 max_tokens=200,
                 n=1,
                 stop=None,
-                temperature=0.7,
+                temperature=0.9,
             )
             return response.choices[0].text.strip()
         except Exception as e:
             print(f"Error generating AI prediction: {e}")
-            return self.interpret_combination(cards)
+            return None
 
     def generate_prediction(self, question):
         cards = self.draw_cards()
-        prediction = self.generate_ai_prediction(question, cards)
+        for _ in range(3):  # Try up to 3 times
+            prediction = self.generate_ai_prediction(question, cards)
+            if prediction and "Ваше кулинарное путешествие включает в себя" not in prediction:
+                return cards, prediction
         
-        if not prediction:
-            zodiac = random.choice(self.zodiac_signs)
-            interpretation = self.interpret_combination(cards)
-            card_names = [f'"{card.split(".")[0].replace("_", " ")}"' for card in cards]
-            prediction = f'На ваш вопрос "{question}" выпали карты: {", ".join(card_names)}. {interpretation} {zodiac} будет вашим путеводителем в этом гастрономическом приключении!'
+        # If we still don't have a good prediction, generate a more randomized one
+        zodiac = random.choice(self.zodiac_signs)
+        card_names = [f'"{card.split(".")[0].replace("_", " ")}"' for card in cards]
+        pizza_elements = ['соус', 'сыр', 'тесто', 'начинка', 'духовка', 'нарезка', 'подача']
+        random_elements = random.sample(pizza_elements, 3)
+        prediction = f'Карты {", ".join(card_names)} предвещают неожиданный поворот в вашем кулинарном приключении! {random_elements[0].capitalize()} станет вашим вдохновением, {random_elements[1]} преподнесет сюрприз, а {random_elements[2]} раскроет ваш потенциал. {zodiac} подскажет, когда пицца будет идеальной!'
         
         return cards, prediction

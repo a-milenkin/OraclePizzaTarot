@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('question-form');
     const questionInput = document.getElementById('question-input');
     const predictionDiv = document.getElementById('prediction');
-    const tarotCardSpan = document.getElementById('tarot-card');
+    const tarotCardsList = document.getElementById('tarot-cards');
     const predictionTextP = document.getElementById('prediction-text');
 
     form.addEventListener('submit', async (e) => {
@@ -22,7 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            tarotCardSpan.textContent = data.card;
+            tarotCardsList.innerHTML = '';
+            data.cards.forEach(card => {
+                const li = document.createElement('li');
+                li.textContent = card;
+                tarotCardsList.appendChild(li);
+            });
             predictionTextP.textContent = data.prediction;
             predictionDiv.style.display = 'block';
         } catch (error) {

@@ -14,9 +14,9 @@ def predict():
     if not question:
         return jsonify({'error': 'No question provided'}), 400
 
-    card, prediction = tarot_oracle.generate_prediction(question)
+    cards, prediction = tarot_oracle.generate_prediction(question)
     return jsonify({
-        'card': card,
+        'cards': cards,
         'prediction': prediction
     })
 

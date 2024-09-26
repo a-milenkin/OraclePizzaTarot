@@ -14,17 +14,29 @@ class TarotOracle:
             'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
         ]
 
+    def draw_cards(self, num_cards=3):
+        return random.sample(self.tarot_cards, num_cards)
+
+    def interpret_combination(self, cards):
+        combinations = {
+            ('Шут', 'Маг'): "Начало нового творческого пути с большим потенциалом.",
+            ('Императрица', 'Император'): "Баланс между созиданием и структурой в вашей жизни.",
+            ('Луна', 'Солнце'): "Переход от неуверенности к ясности и успеху.",
+            ('Смерть', 'Возрождение'): "Глубокая трансформация и новые возможности.",
+        }
+
+        for combo, interpretation in combinations.items():
+            if all(card in cards for card in combo):
+                return interpretation
+
+        return "Уникальная комбинация карт предвещает интересные повороты судьбы."
+
     def generate_prediction(self, question):
-        card = random.choice(self.tarot_cards)
+        cards = self.draw_cards()
         zodiac = random.choice(self.zodiac_signs)
+        interpretation = self.interpret_combination(cards)
         
-        predictions = [
-            f"На ваш вопрос '{question}' карта {card} отвечает: Ваша пицца предвещает неожиданные повороты судьбы. {zodiac} будет вашим путеводителем в этом гастрономическом приключении!",
-            f"Относительно '{question}', о, {card}! Ваша пицца раскрывает тайны вселенной. Не удивляйтесь, если {zodiac} принесет вам удачу в ближайшем будущем.",
-            f"Интересно... Учитывая ваш вопрос '{question}', {card} намекает на скрытые возможности. Подумайте о влиянии {zodiac} на ваш выбор начинки для следующей пиццы!",
-            f"Мм, в контексте '{question}', {card} в сочетании с энергией {zodiac} предсказывает грядущие перемены. Возможно, пора попробовать новый рецепт пиццы?",
-            f"Ах, '{question}'! {card} шепчет о грядущих приключениях. {zodiac} советует быть открытым новым вкусовым ощущениям!"
-        ]
+        prediction = f"На ваш вопрос '{question}' выпали карты: {', '.join(cards)}. {interpretation} {zodiac} будет вашим путеводителем в этом гастрономическом приключении!"
         
-        prediction = random.choice(predictions)
-        return card, prediction
+        return cards, prediction
+

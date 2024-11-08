@@ -7,15 +7,23 @@ tarot_oracle = TarotOracle()
 
 @app.route('/')
 def index():
+    # Печатает 'hello world' в консоль
+    print('hello world')
+    # Отображает и возвращает шаблон 'index.html'
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    # Извлекает 'question' из данных формы
     question = request.form.get('question')
+    # Проверяет, существует ли 'question'
     if not question:
+        # Возвращает сообщение об ошибке в формате JSON, если 'question' не предоставлен
         return jsonify({'error': 'No question provided'}), 400
 
+    # Генерирует предсказание с помощью таро оракула на основе данного вопроса
     cards, prediction = tarot_oracle.generate_prediction(question)
+    # Возвращает карты и предсказание в формате JSON
     return jsonify({
         'cards': cards,
         'prediction': prediction

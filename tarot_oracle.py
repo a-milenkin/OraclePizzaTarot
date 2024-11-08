@@ -1,6 +1,6 @@
 import random
 import os
-import openai
+from openai import OpenAI
 
 class TarotOracle:
     def __init__(self):
@@ -39,7 +39,7 @@ class TarotOracle:
             'Суд': 'возрождение, пробуждение',
             'Мир': 'завершение, достижение'
         }
-        openai.api_key = os.environ.get("OPENAI_API_KEY")
+        self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     def draw_cards(self, num_cards=3):
         card_images = os.listdir('taro_cards_images')
@@ -53,7 +53,9 @@ class TarotOracle:
         
         card_descriptions = "\n".join([f"{card}: {self.card_meanings.get(card, 'значение неизвестно')}" for card in card_names])
         
-        prompt = f'''
+        messages = [
+            {"role": "system", "content": "Вы - мистический предсказатель, специализирующийся на гадании на картах Таро с уклоном в кулинарию и приготовление пиццы."},
+            {"role": "user", "content": f'''
 Создайте уникальное и разнообразное предсказание на основе следующей информации:
 Вопрос: "{question}"
 Выпавшие карты Таро: {', '.join(card_names)}
@@ -67,18 +69,18 @@ class TarotOracle:
 Используйте творческий подход, юмор и метафоры, связанные с пиццей и ее ингредиентами.
 Не используйте шаблонные фразы вроде "Ваше кулинарное путешествие включает в себя".
 Ответ должен быть на русском языке и состоять из 4-5 уникальных предложений.
-'''
+'''}
+        ]
 
         try:
-            response = openai.Completion.create(
-                engine="text-davinci-002",
-                prompt=prompt,
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=messages,
                 max_tokens=200,
                 n=1,
-                stop=None,
                 temperature=0.9,
             )
-            return response.choices[0].text.strip()
+            return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"Error generating AI prediction: {e}")
             return None
